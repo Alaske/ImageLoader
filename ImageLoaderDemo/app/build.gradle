@@ -4,7 +4,7 @@ android {
     compileSdkVersion 27
     buildToolsVersion "27.0.2"
     defaultConfig {
-        applicationId "imageloader.libin.com.imageloaderdemo"
+        applicationId "imageloader.libin.com.imageloaderdemo2"
         minSdkVersion 14
         targetSdkVersion 25
         versionCode 1
@@ -48,17 +48,14 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-//    compile project(':ImageLoader')
-    compile project(':mylibrary')
+	compile project(':ImageLoader')
+
     compile 'com.android.support:appcompat-v7:27.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
     compile 'com.orhanobut:logger:1.15'
     testCompile 'junit:junit:4.12'
     compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
-
     implementation 'com.github.bumptech.glide:glide:4.6.1'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
 
-    implementation 'com.yanzhenjie:permission:2.0.0-rc4'
 }

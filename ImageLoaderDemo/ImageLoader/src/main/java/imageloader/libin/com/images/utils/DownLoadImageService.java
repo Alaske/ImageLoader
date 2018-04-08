@@ -46,9 +46,9 @@ public class DownLoadImageService implements Runnable {
         Bitmap bitmap = null;
         try {
             bitmap = Glide.with(context)
-                    .load(url)
                     .asBitmap()
-                    .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                    .load(url)
+                    .submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                     .get();
             if (bitmap != null){
                 // 在这里执行图片保存方法

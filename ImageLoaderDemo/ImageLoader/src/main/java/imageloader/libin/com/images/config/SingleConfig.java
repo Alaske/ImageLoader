@@ -7,11 +7,12 @@ import android.view.View;
 import android.view.animation.Animation;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.ViewPropertyAnimation;
+import com.bumptech.glide.request.transition.ViewPropertyTransition;
 
 import java.io.File;
 
 import imageloader.libin.com.images.utils.ImageUtil;
+
 
 /**
  * Created by doudou on 2017/4/10.
@@ -61,7 +62,7 @@ public class SingleConfig {
     private int animationId;
     private Animation animation;
 
-    private ViewPropertyAnimation.Animator animator;
+    private ViewPropertyTransition.Animator animator;
 
     private int blurRadius;
     private int placeHolderResId;
@@ -254,7 +255,7 @@ public class SingleConfig {
         return animation;
     }
 
-    public ViewPropertyAnimation.Animator getAnimator() {
+    public ViewPropertyTransition.Animator getAnimator() {
         return animator;
     }
 
@@ -433,7 +434,7 @@ public class SingleConfig {
         public int animationId; //动画资源id
         public int animationType; //动画资源Type
         public Animation animation; //动画资源
-        public ViewPropertyAnimation.Animator animator; //动画资源id
+        public ViewPropertyTransition.Animator animator; //动画资源id
 
         public ConfigBuilder(Context context) {
             this.context = context;
@@ -687,7 +688,7 @@ public class SingleConfig {
             return this;
         }
 
-        public ConfigBuilder animate(ViewPropertyAnimation.Animator animator) {
+        public ConfigBuilder animate(ViewPropertyTransition.Animator animator) {
             this.animationType = AnimationMode.ANIMATOR;
             this.animator = animator;
             return this;

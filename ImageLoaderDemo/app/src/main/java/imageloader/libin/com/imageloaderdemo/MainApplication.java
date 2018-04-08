@@ -2,7 +2,7 @@ package imageloader.libin.com.imageloaderdemo;
 
 import android.app.Application;
 
-import com.maowo.mylibrary.images.loader.ImageLoader;
+import imageloader.libin.com.images.loader.ImageLoader;
 
 
 /**
