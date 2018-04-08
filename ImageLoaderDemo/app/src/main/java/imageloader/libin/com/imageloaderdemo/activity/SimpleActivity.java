@@ -12,29 +12,32 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.ViewPropertyAnimation;
+import com.bumptech.glide.request.transition.ViewPropertyTransition;
+import com.maowo.mylibrary.images.config.PriorityMode;
+import com.maowo.mylibrary.images.config.ScaleMode;
+import com.maowo.mylibrary.images.imagei.ImageDownLoadCallBack;
+import com.maowo.mylibrary.images.loader.ImageLoader;
+import com.maowo.mylibrary.images.utils.DownLoadImageService;
 
 import java.io.File;
 
+import imageloader.libin.com.imageloaderdemo.GlideApp;
 import imageloader.libin.com.imageloaderdemo.R;
-import imageloader.libin.com.images.config.PriorityMode;
-import imageloader.libin.com.images.config.ScaleMode;
-import imageloader.libin.com.images.imagei.ImageDownLoadCallBack;
-import imageloader.libin.com.images.loader.ImageLoader;
-import imageloader.libin.com.images.utils.DownLoadImageService;
+import jp.wasabeef.glide.transformations.gpu.SepiaFilterTransformation;
 
+import static com.maowo.mylibrary.images.config.Contants.ANDROID_RESOURCE;
+import static com.maowo.mylibrary.images.config.Contants.ASSERTS_PATH;
+import static com.maowo.mylibrary.images.config.Contants.FOREWARD_SLASH;
+import static com.maowo.mylibrary.images.config.Contants.RAW;
 import static imageloader.libin.com.imageloaderdemo.config.imageconfig.IMG_NAME;
 import static imageloader.libin.com.imageloaderdemo.config.imageconfig.IMG_NAME_C;
 import static imageloader.libin.com.imageloaderdemo.config.imageconfig.URL1;
+import static imageloader.libin.com.imageloaderdemo.config.imageconfig.URL2;
 import static imageloader.libin.com.imageloaderdemo.config.imageconfig.URL3;
 import static imageloader.libin.com.imageloaderdemo.config.imageconfig.URL4;
 import static imageloader.libin.com.imageloaderdemo.config.imageconfig.URL5;
-import static imageloader.libin.com.images.config.Contants.ANDROID_RESOURCE;
-import static imageloader.libin.com.images.config.Contants.ASSERTS_PATH;
-import static imageloader.libin.com.images.config.Contants.FOREWARD_SLASH;
-import static imageloader.libin.com.images.config.Contants.RAW;
+
 
 public class SimpleActivity extends AppCompatActivity {
 
@@ -85,20 +88,20 @@ public class SimpleActivity extends AppCompatActivity {
     }
 
     private void load() {
-        ViewPropertyAnimation.Animator animationObject = new ViewPropertyAnimation.Animator() {
+        ViewPropertyTransition.Animator animationObject = new ViewPropertyTransition.Animator() {
             @Override
             public void animate(View view) {
                 view.setAlpha( 0f );
 
                 ObjectAnimator fadeAnim = ObjectAnimator.ofFloat( view, "alpha", 0f, 1f );
-                fadeAnim.setDuration( 2500 );
+                fadeAnim.setDuration( 52500 );
                 fadeAnim.start();
             }
         };
 
         ImageLoader.with(this)
-                .url(URL1)
-                .animate(animationObject)
+                .url(URL2)
+//                .animate(android.R.anim.slide_in_left)
                 .placeHolder(R.mipmap.ic_launcher)
                 .scale(ScaleMode.CENTER_CROP)
                 .into(iv_test1);
@@ -115,13 +118,13 @@ public class SimpleActivity extends AppCompatActivity {
 //                .scale(ScaleMode.FIT_CENTER)
 //                .into(iv_test3);
 
-        Glide.with(this).load(URL4).asGif().diskCacheStrategy(DiskCacheStrategy.SOURCE)
+        GlideApp.with(this).asGif().placeholder(R.mipmap.ic_launcher).transform(new SepiaFilterTransformation()).circleCrop().load(URL4).diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .into(iv_test3);
 
         ImageLoader.with(this)
                 .url(URL4)
                 .placeHolder(R.mipmap.ic_launcher)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .scale(ScaleMode.FIT_CENTER)
                 .into(iv_test4);
 
@@ -138,8 +141,8 @@ public class SimpleActivity extends AppCompatActivity {
                 .into(iv_test6);
 
         ImageLoader.with(this)
-                .res(R.drawable.gif_test)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .res(R.drawable.ads)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .placeHolder(R.mipmap.ic_launcher)
                 .scale(ScaleMode.FIT_CENTER)
                 .into(iv_test7);
@@ -148,6 +151,7 @@ public class SimpleActivity extends AppCompatActivity {
                 .res(R.drawable.jpeg_test)
                 .placeHolder(R.mipmap.ic_launcher)
                 .scale(ScaleMode.FIT_CENTER)
+                .toonFilter()
                 .into(iv_test8);
 
         ImageLoader.with(this)

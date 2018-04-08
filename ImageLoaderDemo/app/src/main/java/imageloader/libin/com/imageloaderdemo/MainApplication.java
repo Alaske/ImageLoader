@@ -2,7 +2,8 @@ package imageloader.libin.com.imageloaderdemo;
 
 import android.app.Application;
 
-import imageloader.libin.com.images.loader.ImageLoader;
+import com.maowo.mylibrary.images.loader.ImageLoader;
+
 
 /**
  * Created by doudou on 2017/4/10.
@@ -31,4 +32,7 @@ public class MainApplication extends Application {
 
         ImageLoader.clearAllMemoryCaches();
     }
+
+//    @GlideModule
+//    public final class MyAppGlideModule extends AppGlideModule {}
 }

@@ -7,19 +7,24 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.yanzhenjie.permission.Action;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Permission;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import imageloader.libin.com.imageloaderdemo.R;
 
 import static imageloader.libin.com.imageloaderdemo.config.imageconfig.IMG_NAME_C;
 
 public class MainActivity extends AppCompatActivity {
-    Button btn_big_img ;
-    Button btn_viewpager ;
-    Button btn_round ;
+    Button btn_big_img;
+    Button btn_viewpager;
+    Button btn_round;
 
     static {
         System.loadLibrary("native-lib");
@@ -37,6 +42,20 @@ public class MainActivity extends AppCompatActivity {
         copyFile();
 
         setonClick();
+
+        AndPermission.with(this)
+                .permission(Permission.WRITE_EXTERNAL_STORAGE)
+                .onGranted(new Action() {
+                    @Override
+                    public void onAction(List<String> permissions) {
+                        // TODO what to do.
+                    }
+                }).onDenied(new Action() {
+            @Override
+            public void onAction(List<String> permissions) {
+                // TODO what to do
+            }
+        }).start();
     }
 
     private void setonClick() {
@@ -77,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             is.close();
             fos.close();
         } catch (IOException e) {
-            Toast.makeText(MainActivity.this,"图片存储失败",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "图片存储失败", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -1,1 +1,1 @@
-include ':app', ':ImageLoader'
+include ':app',  ':mylibrary'  //':ImageLoader',
