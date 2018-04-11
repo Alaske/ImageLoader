@@ -1,3 +1,5 @@
+这是本人基于原作者对于ImagLoader进行gradle 4.0 的适配，特修改readme.md 以适应源码的变更。本人水平有限，在适配过程中，有处理不妥之处，请指出。感谢原作者的封转思想，十分收益。
+
 前言
 =============
 > - 有人可能会问为什么选择Glide进行二次封装？
@@ -26,7 +28,7 @@ Or Maven:
 <dependency>
   <groupId>com.github.bumptech.glide</groupId>
   <artifactId>glide</artifactId>
-  <version>3.7.0</version>
+  <version>4.6.1</version>
 </dependency>
 <dependency>
   <groupId>com.google.android</groupId>
@@ -85,20 +87,14 @@ Glide
 
 ##常用API
 > - **thumbnail(float sizeMultiplier)**. 请求给定系数的缩略图。如果缩略图比全尺寸图先加载完，就显示缩略图，否则就不显示。系数sizeMultiplier必须在(0,1)之间，可以递归调用该方法。
-> - **sizeMultiplier(float sizeMultiplier).** 在加载资源之前给Target大小设置系数。
-> - **diskCacheStrategy(DiskCacheStrategy strategy).**设置缓存策略。> -DiskCacheStrategy.SOURCE：缓存原始数据，DiskCacheStrategy.RESULT：缓存变换(如缩放、裁剪等)后的资源数据，DiskCacheStrategy.NONE：什么都不缓存，DiskCacheStrategy.ALL：缓存SOURC和RESULT。默认采用> -> -DiskCacheStrategy.RESULT策略，对于download only操作要使用> -DiskCacheStrategy.SOURCE。
+> - ** (DiskCacheStrategy strategy).**设置缓存策略。> -DiskCacheStrategy.SOURCE：缓存原始数据，DiskCacheStrategy.RESULT：缓存变换(如缩放、裁剪等)后的资源数据，DiskCacheStrategy.NONE：什么都不缓存，DiskCacheStrategy.ALL：缓存SOURC和RESULT。默认采用> -> -DiskCacheStrategy.RESULT策略，对于download only操作要使用> -DiskCacheStrategy.SOURCE。
 > - **priority(Priority priority)**. 指定加载的优先级，优先级越高越优先加载，但不保证所有图片都按序加载。枚举Priority.IMMEDIATE，Priority.HIGH，Priority.NORMAL，Priority.LOW。默认为Priority.NORMAL。
-> - **dontAnimate()
-> .** 移除所有的动画。
+> - **dontAnimate()** 移除所有的动画。
 > - **animate(int animationId).** 在异步加载资源完成时会执行该动画。
-> - **animate(ViewPropertyAnimation.Animator animator).** 在异步加载资源完成时> 会执行该动画。
+> - **animate(ViewPropertyAnimation.Animator animator).** 在异步加载资源完成时会执行该动画。
+> - **animate(Animation animation).** 在异步加载资源完成时会执行该动画。
 > - **placeholder(int resourceId)**. 设置资源加载过程中的占位Drawable。
-> - **placeholder(Drawable drawable).** 设置资源加载过程中的占位Drawable。
-> - **fallback(int resourceId).** 设置model为空时要显示的Drawable。如果没设置fallback，model为空时将显示error的Drawable，如果error的Drawable也没设置，就显示placeholder的Drawable。
-> - **fallback(Drawable drawable)**.设置model为空时显示的Drawable。
-> - **error(int resourceId).**设置load失败时显示的Drawable。
-> - **error(Drawable drawable).**设置load失败时显示的Drawable。
-> -**listener(RequestListener《? super ModelType, TranscodeType》> -requestListener).** 监听资源加载的请求状态，可以使用两个回调：onResourceReady(R resource, T model, Target<R> target, boolean isFromMemoryCache, boolean isFirstResource)和onException(Exception e, T model, Target&lt;R&gt; target, boolean isFirstResource)，但不要每次请求都使用新的监听器，要避免不必要的内存申请，可以使用单例进行统一的异常监听和处理。
+> - **error(int resourceId).** 设置load失败时显示的Drawable。
 > - **skipMemoryCache(boolean skip).** 设置是否跳过内存缓存，但不保证一定不被缓存（比如请求已经在加载资源且没设置跳过内存缓存，这个资源就会被缓存在内存中）。
 > - **override(int width, int height).** 重新设置Target的宽高值（单位为pixel）。
 > - **into(Y target)**.设置资源将被加载到的Target。
@@ -106,7 +102,7 @@ Glide
 > - **into(int width, int height)**. 后台线程加载时要加载资源的宽高值（单位为pixel）。
 > - **preload(int width, int height)**. 预加载resource到缓存中（单位为pixel）。
 > - **asBitmap().** 无论资源是不是gif动画，都作为Bitmap对待。如果是gif动画会停在第一帧。
-> - **asGif().**把资源作为GifDrawable对待。如果资源不是gif动画将会失败，会回调.error()。
+> - **asGif().** 把资源作为GifDrawable对待。如果资源不是gif动画将会失败，会回调.error()。
 
 ***更多Glide详细介绍可以看[Glide官网](https://github.com/bumptech/glide)以及[Glide教程系列文章](http://www.jianshu.com/p/7610bdbbad17)***
 
@@ -164,7 +160,7 @@ ImageLoader.with(this)
 
 从这里可以看出我们提供了四个构造器，这里注释详细说明了所有参数的用法及意义。
 
-除了初始化，我们还需要在Application中重写以下方法：
+~~除了初始化，我们还需要在Application中重写以下方法：~~ （已经废弃,Glide4.0之后，在Glide自身的生命周期中会主动调用释放onTrimMemory(level) 和 onLowMemory()，不建议外部调用）
 
 ```
 	@Override
@@ -181,7 +177,7 @@ ImageLoader.with(this)
         ImageLoader.clearAllMemoryCaches();
     }
 ```
-上面这两个方法会在下面ImageLoader中介绍到。
+~~上面这两个方法会在下面ImageLoader中介绍到。~~
 
 ##你所关心的类--ImageLoader
 ImageLoader是封装好所有的方法供用户使用的，让我们看看都有什么方法：
@@ -206,14 +202,19 @@ ImageLoader是封装好所有的方法供用户使用的，让我们看看都有
 > - rectRoundCorner(int rectRoundRadius, int overlayColorWhenGif) //形状为圆角矩形时的圆角半径
 > - asSquare() //形状为正方形
 > - colorFilter(int color) //颜色滤镜
-> - diskCacheStrategy(DiskCacheStrategy diskCacheStrategy) //DiskCacheStrategy.NONE :不缓存图片 ／DiskCacheStrategy.SOURCE :缓存图片源文件／DiskCacheStrategy.RESULT:缓存修改过的图片／DiskCacheStrategy.ALL:缓存所有的图片，默认
+> - diskCacheStrategy(DiskCacheStrategy diskCacheStrategy) 
+    1. DiskCacheStrategy.ALL 使用DATA和RESOURCE缓存远程数据，仅使用RESOURCE来缓存本地数据。
+    2. DiskCacheStrategy.NONE 不使用磁盘缓存
+    3. DiskCacheStrategy.DATA 在资源解码前就将原始数据写入磁盘缓存
+    4. DiskCacheStrategy.RESOURCE 在资源解码后将数据写入磁盘缓存，即经过缩放等转换后的图片资源。
+    5. DiskCacheStrategy.AUTOMATIC 根据原始图片数据和资源编码策略来自动选择磁盘缓存策略。（默认）
 > - asCircle(int overlayColorWhenGif)//加载圆形图片
 > - placeHolder(int placeHolderResId) //占位图
 > - override(int oWidth, int oHeight) //加载图片时设置分辨率 a
 > - scale(int scaleMode) // CENTER_CROP等比例缩放图片，直到图片的狂高都大于等于ImageView的宽度，然后截取中间的显示 ; FIT_CENTER 等比例缩放图片，宽或者是高等于ImageView的宽或者是高 默认：FIT_CENTER
 > - animate(int animationId ) 引入动画
- > - animate( Animation animation) 引入动画
- > - animate(ViewPropertyAnimation.Animator animato) 引入动画
+> - animate( Animation animation) 引入动画
+> - animate(ViewPropertyAnimation.Animator animato) 引入动画
 > - asBitmap(BitmapListener bitmapListener)// 使用bitmap不显示到imageview
 > - into(View targetView) //展示到imageview
 > - colorFilter(int filteColor) //颜色滤镜
@@ -235,6 +236,12 @@ ImageLoader是封装好所有的方法供用户使用的，让我们看看都有
 GlideLoader实现ILoader接口。在使用的时候我们虽然不用关心这个类，但是了解一下主要做了什么功能还是不错的。
 
 ```
+/**
+ * Created by doudou on 2017/4/10.
+ * 参考:
+ * https://mrfu.me/2016/02/28/Glide_Sries_Roundup/
+ * modify by jacklyy
+ */
 public class GlideLoader implements ILoader {
 
     /**
@@ -246,121 +253,120 @@ public class GlideLoader implements ILoader {
     @Override
     public void init(Context context, int cacheSizeInM, MemoryCategory memoryCategory, boolean isInternalCD) {
         Glide.get(context).setMemoryCategory(memoryCategory); //如果在应用当中想要调整内存缓存的大小，开发者可以通过如下方式：
-        GlideBuilder builder = new GlideBuilder(context);
+        GlideBuilder builder = new GlideBuilder();
         if (isInternalCD) {
             builder.setDiskCache(new InternalCacheDiskCacheFactory(context, cacheSizeInM * 1024 * 1024));
         } else {
-            builder.setDiskCache(new ExternalCacheDiskCacheFactory(context, cacheSizeInM * 1024 * 1024));
+            builder.setDiskCache(new ExternalPreferredCacheDiskCacheFactory(context, cacheSizeInM * 1024 * 1024));
         }
+
     }
 
     @Override
     public void request(final SingleConfig config) {
-        RequestManager requestManager = Glide.with(config.getContext());
-        DrawableTypeRequest request = getDrawableTypeRequest(config, requestManager);
+        RequestOptions requestOptions = getRequestOptions(config);//得到初始的 RequestOptions
 
-        if (config.isAsBitmap()) {
+        RequestBuilder requestBuilder = getRequestBuilder(config); //得到一个正确类型的 RequestBuilder(bitmap or 其他加载)
+
+        if (requestBuilder == null) {
+            return;
+        }
+
+        requestBuilder.apply(requestOptions);//应用RequestOptions
+
+
+        //设置缩略图
+        if (config.getThumbnail() != 0) { //设置缩略比例
+            requestBuilder.thumbnail(config.getThumbnail());
+        }
+
+        //设置图片加载动画
+        setAnimator(config, requestBuilder);
+
+        if (config.isAsBitmap()) {//如果是获取bitmap,则回调
             SimpleTarget target = new SimpleTarget<Bitmap>(config.getWidth(), config.getHeight()) {
                 @Override
-                public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-                    config.getBitmapListener().onSuccess(bitmap);
+                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                    if (config.getBitmapListener() != null) {
+                        config.getBitmapListener().onSuccess(resource);
+                    }
                 }
+
             };
-
-            setShapeModeAndBlur(config, request);
-
-            if (config.getDiskCacheStrategy() != null) {
-                request.diskCacheStrategy(config.getDiskCacheStrategy());
-                Logger.e("config.getDiskCacheStrategy() :  " + config.getDiskCacheStrategy());
-            }
-
-            request.asBitmap().into(target);
-
-        } else {
-
-            if (request == null) {
-                return;
-            }
-
-            if (MyUtil.shouldSetPlaceHolder(config)) {
-                request.placeholder(config.getPlaceHolderResId());
-            }
-
-            int scaleMode = config.getScaleMode();
-
-            switch (scaleMode) {
-                case ScaleMode.CENTER_CROP:
-                    request.centerCrop();
-                    break;
-                case ScaleMode.FIT_CENTER:
-                    request.fitCenter();
-                    break;
-                default:
-                    request.fitCenter();
-                    break;
-            }
-
-            // TODO: 2017/4/21 设置图片滤镜(目前只有高斯)
-            setShapeModeAndBlur(config, request);
-
-            //设置缩略图
-            if (config.getThumbnail() != 0) {
-                request.thumbnail(config.getThumbnail());
-            }
-
-            //设置图片加载的分辨 sp
-            if (config.getoWidth() != 0 && config.getoHeight() != 0) {
-                request.override(config.getoWidth(), config.getoHeight());
-                Logger.e("设置图片加载的分辨 : " + config.getoWidth() + "   " + config.getoHeight());
-            }
-
-            //是否跳过磁盘存储
-            if (config.getDiskCacheStrategy() != null) {
-                request.diskCacheStrategy(config.getDiskCacheStrategy());
-                Logger.e("config.getDiskCacheStrategy() :  " + config.getDiskCacheStrategy());
-            }
-
-            //设置图片加载动画
-            setAnimator(config, request);
-
-            //设置图片加载优先级
-            setPriority(config, request);
-
-            if (config.getErrorResId() > 0) {
-                request.error(config.getErrorResId());
-            }
-
+            requestBuilder.into(target);
+        } else {//如果是加载图片，（无论是否为Gif）
             if (config.getTarget() instanceof ImageView) {
-                request.into((ImageView) config.getTarget());
-
-                Logger.e("config.getTarget()" + config.getTarget().getMeasuredWidth());
+                requestBuilder.into((ImageView) config.getTarget());
             }
         }
 
     }
+
+    private RequestOptions getRequestOptions(SingleConfig config) {
+        RequestOptions options = new RequestOptions();
+        //设置磁盘缓存
+        if (config.getDiskCacheStrategy() != null) {
+            options.diskCacheStrategy(config.getDiskCacheStrategy());
+        }else{
+            options.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);//默认为自动选择
+        }
+        if (ImageUtil.shouldSetPlaceHolder(config)) {
+            options = options.placeholder(config.getPlaceHolderResId());
+        }
+
+        int scaleMode = config.getScaleMode();
+
+        switch (scaleMode) {
+            case ScaleMode.CENTER_CROP:
+                options.centerCrop();
+                break;
+            case ScaleMode.FIT_CENTER:
+                options.fitCenter();
+                break;
+            default:
+                options.fitCenter();
+                break;
+        }
+
+        //设置图片加载的分辨 sp
+        if (config.getoWidth() != 0 && config.getoHeight() != 0) {
+            options.override(config.getoWidth(), config.getoHeight());
+        }
+
+
+        //设置图片加载优先级
+        setPriority(config, options);
+
+        if (config.getErrorResId() > 0) {
+            options.error(config.getErrorResId());
+        }
+        setShapeModeAndBlur(config, options);//设置RequestOptions 关于 多重变换
+        return options;
+    }
+
 
     /**
      * 设置加载优先级
      *
      * @param config
-     * @param request
+     * @param options
      */
-    private void setPriority(SingleConfig config, DrawableTypeRequest request) {
+    private void setPriority(SingleConfig config, RequestOptions options) {
         switch (config.getPriority()) {
             case PriorityMode.PRIORITY_LOW:
-                request.priority(Priority.LOW);
+                options.priority(Priority.LOW);
                 break;
             case PriorityMode.PRIORITY_NORMAL:
-                request.priority(Priority.NORMAL);
+                options.priority(Priority.NORMAL);
                 break;
             case PriorityMode.PRIORITY_HIGH:
-                request.priority(Priority.HIGH);
+                options.priority(Priority.HIGH);
                 break;
             case PriorityMode.PRIORITY_IMMEDIATE:
-                request.priority(Priority.IMMEDIATE);
+                options.priority(Priority.IMMEDIATE);
                 break;
             default:
-                request.priority(Priority.IMMEDIATE);
+                options.priority(Priority.IMMEDIATE);
                 break;
         }
     }
@@ -371,27 +377,55 @@ public class GlideLoader implements ILoader {
      * @param config
      * @param request
      */
-    private void setAnimator(SingleConfig config, DrawableTypeRequest request) {
+    private void setAnimator(SingleConfig config, RequestBuilder request) {
         if (config.getAnimationType() == AnimationMode.ANIMATIONID) {
-            request.animate(config.getAnimationId());
+            GenericTransitionOptions genericTransitionOptions = GenericTransitionOptions.with(config.getAnimationId());
+            request.transition(genericTransitionOptions);
         } else if (config.getAnimationType() == AnimationMode.ANIMATOR) {
-            request.animate(config.getAnimator());
+            GenericTransitionOptions genericTransitionOptions = GenericTransitionOptions.with(config.getAnimator());
+            request.transition(genericTransitionOptions);
         } else if (config.getAnimationType() == AnimationMode.ANIMATION) {
-            request.animate(config.getAnimation());
+            GenericTransitionOptions genericTransitionOptions = GenericTransitionOptions.with(new ViewAnimationFactory(config.getAnimation()));
+            request.transition(genericTransitionOptions);
+        } else {//设置默认的交叉淡入动画
+            request.transition(DrawableTransitionOptions.withCrossFade());
         }
     }
 
     @Nullable
-    private DrawableTypeRequest getDrawableTypeRequest(SingleConfig config, RequestManager requestManager) {
-        DrawableTypeRequest request = null;
+    private RequestBuilder getRequestBuilder(SingleConfig config) {
+
+        RequestManager requestManager = Glide.with(config.getContext());
+        RequestBuilder request = null;
+        if (config.isAsBitmap()) {
+            request = requestManager.asBitmap();
+
+        } else if (config.isGif()) {
+            request = requestManager.asGif();
+        } else {
+            request = requestManager.asDrawable();
+        }
         if (!TextUtils.isEmpty(config.getUrl())) {
-            request = requestManager.load(MyUtil.appendUrl(config.getUrl()));
+            request.load(ImageUtil.appendUrl(config.getUrl()));
+            Log.e("TAG", "getUrl : " + config.getUrl());
         } else if (!TextUtils.isEmpty(config.getFilePath())) {
-            request = requestManager.load(MyUtil.appendUrl(config.getFilePath()));
+            request.load(ImageUtil.appendUrl(config.getFilePath()));
+            Log.e("TAG", "getFilePath : " + config.getFilePath());
         } else if (!TextUtils.isEmpty(config.getContentProvider())) {
-            request = requestManager.loadFromMediaStore(Uri.parse(config.getContentProvider()));
+            request.load(Uri.parse(config.getContentProvider()));
+            Log.e("TAG", "getContentProvider : " + config.getContentProvider());
         } else if (config.getResId() > 0) {
-            request = requestManager.load(config.getResId());
+            request.load(config.getResId());
+            Log.e("TAG", "getResId : " + config.getResId());
+        } else if (config.getFile() != null) {
+            request.load(config.getFile());
+            Log.e("TAG", "getFile : " + config.getFile());
+        } else if (!TextUtils.isEmpty(config.getAssertspath())) {
+            request.load(config.getAssertspath());
+            Log.e("TAG", "getAssertspath : " + config.getAssertspath());
+        } else if (!TextUtils.isEmpty(config.getRawPath())) {
+            request.load(config.getRawPath());
+            Log.e("TAG", "getRawPath : " + config.getRawPath());
         }
         return request;
     }
@@ -400,96 +434,102 @@ public class GlideLoader implements ILoader {
      * 设置图片滤镜和形状
      *
      * @param config
-     * @param request
+     * @param options
      */
-    private void setShapeModeAndBlur(SingleConfig config, DrawableTypeRequest request) {
-        int shapeMode = config.getShapeMode();
-        Transformation[] transformation = new Transformation[3];
+    private void setShapeModeAndBlur(SingleConfig config, RequestOptions options) {
+
+        int count = 0;
+
+        Transformation[] transformation = new Transformation[statisticsCount(config)];
+
         if (config.isNeedBlur()) {
-           // transformation[0] = new BlurTransformation(config.getContext(), config.getBlurRadius());
-            transformation[0] = new BrightnessFilterTransformation(config.getContext(), 0.5f);
-            //transformation[0] =new GrayscaleTransformation(config.getContext()); 黑白效果
+            transformation[count] = new BlurTransformation(config.getBlurRadius());
+            count++;
         }
 
-        if(config.isNeedFilteColor()){
-            transformation[2] = new ColorFilterTransformation(config.getContext(), config.getFilteColor());
+        if (config.isNeedBrightness()) {
+            transformation[count] = new BrightnessFilterTransformation(config.getBrightnessLeve()); //亮度
+            count++;
         }
 
-        switch (shapeMode) {
+        if (config.isNeedGrayscale()) {
+            transformation[count] = new GrayscaleTransformation(); //黑白效果
+            count++;
+        }
+
+        if (config.isNeedFilteColor()) {
+            transformation[count] = new ColorFilterTransformation(config.getFilteColor());
+            count++;
+        }
+
+        if (config.isNeedSwirl()) {
+            transformation[count] = new SwirlFilterTransformation(0.5f, 1.0f, new PointF(0.5f, 0.5f)); //漩涡
+            count++;
+        }
+
+        if (config.isNeedToon()) {
+            transformation[count] = new ToonFilterTransformation(); //油画
+            count++;
+        }
+
+        if (config.isNeedSepia()) {
+            transformation[count] = new SepiaFilterTransformation(); //墨画
+            count++;
+        }
+
+        if (config.isNeedContrast()) {
+            transformation[count] = new ContrastFilterTransformation(config.getContrastLevel()); //锐化
+            count++;
+        }
+
+        if (config.isNeedInvert()) {
+            transformation[count] = new InvertFilterTransformation(); //胶片
+            count++;
+        }
+
+        if (config.isNeedPixelation()) {
+            transformation[count] = new PixelationFilterTransformation(config.getPixelationLevel()); //马赛克
+            count++;
+        }
+
+        if (config.isNeedSketch()) {
+            transformation[count] = new SketchFilterTransformation(); //素描
+            count++;
+        }
+
+        if (config.isNeedVignette()) {
+            transformation[count] = new VignetteFilterTransformation(new PointF(0.5f, 0.5f),
+                    new float[]{0.0f, 0.0f, 0.0f}, 0f, 0.75f);//晕映
+            count++;
+        }
+
+        switch (config.getShapeMode()) {
             case ShapeMode.RECT:
 
                 break;
             case ShapeMode.RECT_ROUND:
-                transformation[1] = new RoundedCornersTransformation
-                        (config.getContext(), config.getRectRoundRadius(), 0, RoundedCornersTransformation.CornerType.ALL);
-
+                transformation[count] = new RoundedCornersTransformation
+                        (config.getRectRoundRadius(), 0, RoundedCornersTransformation.CornerType.ALL);
+                count++;
                 break;
-            case ShapeMode.OVAL:
-                transformation[1] = new CropCircleTransformation(config.getContext());
+            case ShapeMode.OVAL://@deprecated Use {@link RequestOptions#circleCrop()}.
+//                transformation[count] = new CropCircleTransformation();
+//                count++;
+                options = options.circleCrop();
                 break;
 
             case ShapeMode.SQUARE:
-                transformation[1] = new CropSquareTransformation(config.getContext());
+                transformation[count] = new CropSquareTransformation();
+                count++;
                 break;
         }
 
-        if (transformation[0] != null && transformation[1] != null && transformation[2] != null) {
-            request.bitmapTransform(transformation);
-        } else if (transformation[0] != null && transformation[1] == null) {
-            request.bitmapTransform(transformation[0]);
-        } else if (transformation[0] == null && transformation[1] != null) {
-            request.bitmapTransform(transformation[1]);
-        }else if(transformation[0] == null && transformation[1] == null && transformation[2] != null){
-            request.bitmapTransform(transformation[2]);
+        if (transformation.length != 0) {
+            options.transforms(transformation);
         }
     }
-
-    @Override
-    public void pause() {
-        Glide.with(GlobalConfig.context).pauseRequestsRecursive();
-
-    }
-
-    @Override
-    public void resume() {
-        Glide.with(GlobalConfig.context).resumeRequestsRecursive();
-    }
-
-    @Override
-    public void clearDiskCache() {
-        Glide.get(GlobalConfig.context).clearDiskCache();
-    }
-
-    @Override
-    public void clearMomoryCache(View view) {
-        Glide.clear(view);
-    }
-
-    @Override
-    public void clearMomory() {
-        Glide.get(GlobalConfig.context).clearMemory();
-    }
-
-    @Override
-    public File getFileFromDiskCache(String url) {
-        return null;
-    }
-
-    @Override
-    public boolean isCached(String url) {
-        return false;
-    }
-
-    @Override
-    public void trimMemory(int level) {
-        Glide.with(GlobalConfig.context).onTrimMemory(level);
-    }
-
-    @Override
-    public void clearAllMemoryCaches() {
-        Glide.with(GlobalConfig.context).onLowMemory();
-    }
-}
+    ...
+ }
 ```
 
 看一下效果哦：
